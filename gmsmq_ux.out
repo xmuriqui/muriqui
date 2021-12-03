@@ -1,0 +1,4 @@
+#!/bin/sh
+#execute Muriqui
+
+muriqui -gams $*

@@ -1,0 +1,55 @@
+include ../../make.inc
+
+
+#CHANGE ME: PUT HERE THE NAME OF EXECUTABLE 
+EXE = t1gross
+
+#CHANGE ME: PUT HERE THE OBJECT FILES TO COMPILATION (NAME OF SOURCE FILES WITH .o EXTENSION) 
+OBJS = ./t1gross.o
+
+
+
+
+ifeq ("$(CXX)" , "cl")
+	#CHANGE ME: CHANGE MYMURIQUIDIR TO POINT TO MURIQUI PATH
+	MYMURIQUIDIR = ..\..
+	MYMURIQUILIB = $(MYMURIQUIDIR)\$(BBLLIBNAME)  $(MYMURIQUIDIR)\$(OPTSLIBNAME)  $(MYMURIQUIDIR)\$(NMCLIBNAME)  $(MYMURIQUIDIR)\$(MINLPPROBLIBNAME)
+else
+	#CHANGE ME: CHANGE MYMURIQUIDIR TO POINT TO MURIQUI PATH
+	MYMURIQUIDIR = ../..
+	MYMURIQUILIB = -L$(MYMURIQUIDIR)/lib   $(MURIQUIONLYLIB) 
+endif
+
+MYMURIQUIINC = -I$(MYMURIQUIDIR)/include     $(MURIQUIONLYINC) 	
+
+
+
+
+INCL = $(MYMURIQUIINC)
+
+LIBS =  $(MYMURIQUILIB) 
+
+
+
+# The following is necessary under cygwin, if native compilers are used
+CYGPATH_W = echo
+
+
+all: cleanexe $(EXE)
+
+.SUFFIXES: .cpp .c .o .obj
+
+	
+$(EXE): $(OBJS)
+	
+	$(CXX) $(CXXLINKFLAGS) $(CXXFLAGS) -o $@ $(OBJS) $(ADDLIBS) $(LIBS)
+
+clean:
+	- $(RM_CMD) $(EXE) $(OBJS)
+
+cleanexe:
+	- $(RM_CMD) $(EXE)
+	
+.cpp.o:
+	$(CXX) $(CXXFLAGS) $(INCL) -c $(COMPILER_OUTPUT_OBJ_FLAG)$@ $<
+
