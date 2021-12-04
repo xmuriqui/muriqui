@@ -1,0 +1,1 @@
+../codnumcomp/NMC_numComp.hpp
