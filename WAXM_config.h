@@ -3,17 +3,17 @@
 
 //flags and constants definitions to my projects
 
-#define WAXM_HAVE_ASL                   1
-#define WAXM_HAVE_GAMS                  1
+#define WAXM_HAVE_ASL                   0
+#define WAXM_HAVE_GAMS                  0
 
-#define WAXM_HAVE_CPLEX                 1
-#define WAXM_HAVE_GUROBI                1
-#define WAXM_HAVE_MOSEK                 1
+#define WAXM_HAVE_CPLEX                 0
+#define WAXM_HAVE_GUROBI                0
+#define WAXM_HAVE_MOSEK                 0
 #define WAXM_HAVE_GLPK                  0
 #define WAXM_HAVE_CBC                   0
 #define WAXM_HAVE_OSI                   0
 #define WAXM_HAVE_XPRESS                0
-#define WAXM_HAVE_IPOPT                 1
+#define WAXM_HAVE_IPOPT                 0
 #define WAXM_HAVE_KNITRO                0
 
 
@@ -27,7 +27,7 @@
 #define WAXM_HAVE_MURIQUI               0
 
 
-#define WAXM_HAVE_LAPACK                1
+#define WAXM_HAVE_LAPACK                0
 #define WAXM_HAVE_CSDP                  0
 
 

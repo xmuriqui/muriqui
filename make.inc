@@ -61,9 +61,9 @@ endif
 #######################################################
 
 #AMPL Solver Library (ASL) variables to compilation. You can let them empty if you want compile whitout ASL
-ASLDIR = /opt/asl/
-ASLINC = -I$(ASLDIR)
-ASLLIB = -L$(ASLDIR)/ -lamplsolver -ldl -lgomp -fopenmp   -lirc -limf
+#ASLDIR = /opt/asl/
+#ASLINC = -I$(ASLDIR)
+#ASLLIB = -L$(ASLDIR)/ -lamplsolver -ldl -lgomp -fopenmp   -lirc -limf
 
 #for windows
 #ASLDIR = C:\Users\wendel\Documents\muriqui\solvers
@@ -73,9 +73,9 @@ ASLLIB = -L$(ASLDIR)/ -lamplsolver -ldl -lgomp -fopenmp   -lirc -limf
 
 
 #GAMS variables to compilation. You can let them empty if you want compile whitout GAMS
-GAMSDIR = /opt/gams/
-GAMSINC = -I$(GAMSDIR)/apifiles/C/api/
-GAMSLIB = $(GAMSDIR)/apifiles/C/api/gmomcc.c  $(GAMSDIR)/apifiles/C/api/gevmcc.c  -ldl
+#GAMSDIR = /opt/gams/
+#GAMSINC = -I$(GAMSDIR)/apifiles/C/api/
+#GAMSLIB = $(GAMSDIR)/apifiles/C/api/gmomcc.c  $(GAMSDIR)/apifiles/C/api/gevmcc.c  -ldl
 
 
 
@@ -89,14 +89,14 @@ GAMSLIB = $(GAMSDIR)/apifiles/C/api/gmomcc.c  $(GAMSDIR)/apifiles/C/api/gevmcc.c
 
 #BLAS variables to compilation
 #BLASDIR = /opt/BLAS
-BLASLIB_MKL = -L/opt/intel/lib/intel64/ -L/opt/intel/compilers_and_libraries/linux/mkl/lib/intel64/  -lmkl_intel_lp64  -lmkl_sequential   -lmkl_core  -liomp5  -lpthread -lm
+#BLASLIB_MKL = -L/opt/intel/lib/intel64/ -L/opt/intel/compilers_and_libraries/linux/mkl/lib/intel64/  -lmkl_intel_lp64  -lmkl_sequential   -lmkl_core  -liomp5  -lpthread -lm
 #BLASLIB = -L$(BLASDIR) -lblas
 
 
 #Lapack variables to compilation
-LAPACKDIR = /opt/lapack
-LAPACKLIB_MKL = $(BLASLIB_MKL)
-LAPACKLIB = $(LAPACKLIB_MKL) # -L$(LAPACKDIR) -llapack -lblas -lrt -lgfortran 
+#LAPACKDIR = /opt/lapack
+#LAPACKLIB_MKL = $(BLASLIB_MKL)
+#LAPACKLIB = $(LAPACKLIB_MKL) # -L$(LAPACKDIR) -llapack -lblas -lrt -lgfortran 
 
 #LAPACKDIR_DEBUG = /opt/lapack_debug
 #LAPACKLIB_DEBUG = -L$(LAPACKDIR_DEBUG) -llapack -lblas -lrt -lgfortran 
@@ -114,22 +114,22 @@ LAPACKLIB = $(LAPACKLIB_MKL) # -L$(LAPACKDIR) -llapack -lblas -lrt -lgfortran
 
 
 #Algencan variables to compilation. You can let them empty if you want compile whitout Algencan
-ALGENCANDIR = /opt/algencan
-ALGENCANINC = 
+#ALGENCANDIR = /opt/algencan
+#ALGENCANINC = 
 #for gcc, you do not need use -lifport nor -lifcoremt
-ALGENCANLIB = -L$(ALGENCANDIR)/lib   -lalgencan  -lifport  -lifcoremt  -lgfortran -lm
+#ALGENCANLIB = -L$(ALGENCANDIR)/lib   -lalgencan  -lifport  -lifcoremt  -lgfortran -lm
 
 
 #CBC variables to compilation. You can let them empty if you want compile whitout CBC
-CBCDIR = /opt/cbc
-CBCINC = -I$(CBCDIR)/include/coin/
-CBCLIB = -L$(CBCDIR)/lib/  -lCbcSolver -lCbc -lOsiCbc   -lCgl  -lOsiClp -lOsi -lCoinUtils  -lClpSolver -lClp
+#CBCDIR = /opt/cbc
+#CBCINC = -I$(CBCDIR)/include/coin/
+#CBCLIB = -L$(CBCDIR)/lib/  -lCbcSolver -lCbc -lOsiCbc   -lCgl  -lOsiClp -lOsi -lCoinUtils  -lClpSolver -lClp
 
 
 #CPLEX variables to compilation. You can let them empty if you want compile whitout CPLEX
-CPLEXDIR = /opt/cplex
-CPLEXINC = -I$(CPLEXDIR)/include/ilcplex/
-CPLEXLIB = -L$(CPLEXDIR)/lib/x86-64_linux/static_pic/ -lcplex -lpthread -pthread -lm -ldl
+#CPLEXDIR = /opt/cplex
+#CPLEXINC = -I$(CPLEXDIR)/include/ilcplex/
+#CPLEXLIB = -L$(CPLEXDIR)/lib/x86-64_linux/static_pic/ -lcplex -lpthread -pthread -lm -ldl
 
 #for windows
 #CPLEXDIR = "C:\Program Files\IBM\ILOG\CPLEX_Studio201\cplex"
@@ -146,21 +146,21 @@ CPLEXLIB = -L$(CPLEXDIR)/lib/x86-64_linux/static_pic/ -lcplex -lpthread -pthread
 
 
 #GLPK variables to compilation. You can let them empty if you want compile whitout GLPK
-GLPKDIR = /opt/glpk
-GLPKINC = -I$(GLPKDIR)/include/
-GLPKLIB = -L$(GLPKDIR)/lib  -lglpk
+#GLPKDIR = /opt/glpk
+#GLPKINC = -I$(GLPKDIR)/include/
+#GLPKLIB = -L$(GLPKDIR)/lib  -lglpk
 
 
 #GUROBI variables to compilation. You can let them empty if you want compile whitout GUROBI
-GUROBIDIR = /opt/gurobi
-GUROBIINC = -I$(GUROBIDIR)/include/
-GUROBILIB = -L$(GUROBIDIR)/lib  -lgurobi -lgfortran $(PARALEL) -lpthread -lm
+#GUROBIDIR = /opt/gurobi
+#GUROBIINC = -I$(GUROBIDIR)/include/
+#GUROBILIB = -L$(GUROBIDIR)/lib  -lgurobi -lgfortran $(PARALEL) -lpthread -lm
 
 
 #IPOPT variables to compilation. You can let them empty if you want compile whitout IPOPT
-IPOPTDIR = /opt/Ipopt
-IPOPTINC = -I$(IPOPTDIR)/include/coin-or/
-IPOPTLIB = -L$(IPOPTDIR)/lib -lipopt -L$(IPOPTDIR)/ThirdParty-HSL/lib -lcoinhsl  -L/opt/intel/lib/intel64/ -lirc -limf -lirng -lintlc -lsvml  $(LAPACKLIB)  $(BLASLIB)
+#IPOPTDIR = /opt/Ipopt
+#IPOPTINC = -I$(IPOPTDIR)/include/coin-or/
+#IPOPTLIB = -L$(IPOPTDIR)/lib -lipopt -L$(IPOPTDIR)/ThirdParty-HSL/lib -lcoinhsl  -L/opt/intel/lib/intel64/ -lirc -limf -lirng -lintlc -lsvml  $(LAPACKLIB)  $(BLASLIB)
 
 
 #KNITRO variables to compilation. You can let them empty if you want compile whitout KNITRO
@@ -171,27 +171,27 @@ IPOPTLIB = -L$(IPOPTDIR)/lib -lipopt -L$(IPOPTDIR)/ThirdParty-HSL/lib -lcoinhsl 
 
 
 #MOSEK variables to compilation. You can let them empty if you want compile whitout MOSEK
-MOSEKDIR = /opt/mosek/8/tools/platform/linux64x86
-MOSEKINC = -I$(MOSEKDIR)/h/
-MOSEKLIB = -L$(MOSEKDIR)/bin -lmosek64 -Wl,-rpath-link,$(MOSEKDIR)/bin  -pthread -lc -lm
+#MOSEKDIR = /opt/mosek/8/tools/platform/linux64x86
+#MOSEKINC = -I$(MOSEKDIR)/h/
+#MOSEKLIB = -L$(MOSEKDIR)/bin -lmosek64 -Wl,-rpath-link,$(MOSEKDIR)/bin  -pthread -lc -lm
 
 
 #Optizelle variables to compilation. You can let them empty if you want compile whitout Optizelle
-OPTIZELLEDIR = /opt/optizelle
-OPTIZELLEINC = -I$(OPTIZELLEDIR)/include/    -I$(OPTIZELLEDIR)/thirdparty/include
-OPTIZELLELIB = -L$(OPTIZELLEDIR)/lib  -loptizelle  -L$(OPTIZELLEDIR)/thirdparty/lib -ljsoncpp  -lgfortran
+#OPTIZELLEDIR = /opt/optizelle
+#OPTIZELLEINC = -I$(OPTIZELLEDIR)/include/    -I$(OPTIZELLEDIR)/thirdparty/include
+#OPTIZELLELIB = -L$(OPTIZELLEDIR)/lib  -loptizelle  -L$(OPTIZELLEDIR)/thirdparty/lib -ljsoncpp  -lgfortran
 
 
 #WORHP variables to compilation. You can let them empty if you want compile whitout WORHP
-WORHPDIR = /opt/worhp
-WORHPINC = -I$(WORHPDIR)/include/worhp/
-WORHPLIB = -L$(WORHPDIR)/lib  -lworhp
+#WORHPDIR = /opt/worhp
+#WORHPINC = -I$(WORHPDIR)/include/worhp/
+#WORHPLIB = -L$(WORHPDIR)/lib  -lworhp
 
 
 #XPRESS variables to compilation. You can let them empty if you want compile whitout XPRESS
-XPRESSDIR = /opt/xpressmp
-XPRESSINC = -I$(XPRESSDIR)/include/
-XPRESSLIB = -L$(XPRESSDIR)/lib/  -lxprs -lxprl -lm
+#XPRESSDIR = /opt/xpressmp
+#XPRESSINC = -I$(XPRESSDIR)/include/
+#XPRESSLIB = -L$(XPRESSDIR)/lib/  -lxprs -lxprl -lm
 
 
 
