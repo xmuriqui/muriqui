@@ -1112,7 +1112,6 @@ int MRQ_LPNLPBBOuterApp::run(MRQ_MINLPProb &prob, MRQ_GeneralSolverParams* milpS
     std::cout << "Gerei bboa.lp\n";
     MRQ_getchar(); */
     
-    
     ret = master->solve();
     
     /*std::cout << "master solving ret code: " << master->retCode << " obj: " << master->objValue << " orig ret code: " << master->origSolverRetCode << "\n";
@@ -1124,9 +1123,13 @@ int MRQ_LPNLPBBOuterApp::run(MRQ_MINLPProb &prob, MRQ_GeneralSolverParams* milpS
         for(int i = 0; i < nI; i++)
             std::cout << " x_" << intVars[i] << ": " << masterSol[intVars[i]];
         std::cout << "\n";
-    }*/
+    } */
     
-    zl = master->getDualObjValue();
+    {
+        double myzl = master->getDualObjValue();
+        if( myzl > zl )
+            zl = myzl;
+    }
     
     if(ret == OPT_OPTIMAL_SOLUTION)
     {
@@ -1139,7 +1142,11 @@ int MRQ_LPNLPBBOuterApp::run(MRQ_MINLPProb &prob, MRQ_GeneralSolverParams* milpS
     }
     else if(ret == OPT_INFEASIBLE_PROBLEM)
     {
-        out_return_code = MRQ_INFEASIBLE_PROBLEM;
+        //if the problem is nonconvex, we can have found a feasible solution and, even so, solver declares infeasibility
+        if( out_best_obj < MRQ_INFINITY )
+            out_return_code = MRQ_UNDEFINED_ERROR;
+        else
+            out_return_code = MRQ_INFEASIBLE_PROBLEM;
     }
     else if(ret == OPT_CALLBACK_FUNCTION_ERROR || ret == MRQ_CALLBACK_FUNCTION_ERROR)
     {

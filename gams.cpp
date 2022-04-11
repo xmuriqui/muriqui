@@ -86,13 +86,13 @@ int MRQ_gams(char *stub, const bool printAlgParameters, const bool printProblem)
         
         std::cout << MRQ_PREPRINT "Reading user parameters:\n";
         
-        std::cout << MRQ_PREPRINT "Trying reading algorithm choice file " MRQ_MURIQUI_ALG_CHOICE_FILE " . ";
+        //std::cout << MRQ_PREPRINT "Trying to read algorithm choice file " MRQ_MURIQUI_ALG_CHOICE_FILE " . ";
         
         
         MRQ_tryReadAlgChoiceFile(MRQ_MURIQUI_ALG_CHOICE_FILE, 1, algCode);
         
         
-        alg = MRQ_newAlgorithm(algCode, prob.getNumberOfNLEqualityConstraints() );
+        alg = MRQ_newAlgorithm(algCode, prob.getNumberOfNLEqualityConstraints() + prob.getNumberOfQuadEqualityConstraints() );
         MRQ_IFMEMERRORGOTOLABEL(!alg, retCode, termination);
         
         
@@ -168,50 +168,50 @@ int MRQ_gams(char *stub, const bool printAlgParameters, const bool printProblem)
             if( r == 0 )
             {
                 
-                std::cout << MRQ_PREPRINT "Trying read input parameter file " << optFileName << ". ";
+                std::cout << MRQ_PREPRINT "Trying to read input parameter file " << optFileName << ". ";
                 
                 r = alg->readParametersWithTypeFromFile( optFileName.c_str(), true);
                 
                 if(r == 0)
                     std::cout << " Done\n" ;
-                else
-                    std::cout << " Failure\n" ;
+                else if(r == MRQ_BAD_PARAMETER_VALUES )
+                    std::cout << " Not found\n" ;
             }
         
             if(r != 0) //do not put an else here necause que can get a failure inside if above
             {
-                std::cout << MRQ_PREPRINT "Trying read input parameter file " MRQ_MURIQUI_PARAMS_FILE " .";
+                std::cout << MRQ_PREPRINT "Trying to read input parameter file " MRQ_MURIQUI_PARAMS_FILE " .";
                 
                 r = alg->readParametersWithTypeFromFile( MRQ_MURIQUI_PARAMS_FILE, true);
                 
                 if(r == 0)
                     std::cout << " Done\n" ;
-                else
-                    std::cout << " Failure\n" ;
+                else if(r == MRQ_BAD_PARAMETER_VALUES )
+                    std::cout << " Not found\n" ;
             }
         
         }
         
         
         {
-            std::cout << MRQ_PREPRINT "Trying read milp solver input parameter file " MRQ_MILP_SOLVER_PARAMS_FILE  " .";
+            std::cout << MRQ_PREPRINT "Trying to read milp solver input parameter file " MRQ_MILP_SOLVER_PARAMS_FILE  " .";
             
             r = milpParams.storeParametersFromFile( MRQ_MILP_SOLVER_PARAMS_FILE, true);
             if(r == 0)
                     std::cout << " Done\n" ;
-                else
-                    std::cout << " Failure\n" ;
+            else if( r == optsolvers::OPT_BAD_INPUT )
+                    std::cout << " Not found\n" ;
         }
         
         
         {
-            std::cout << MRQ_PREPRINT "Trying read nlp solver input parameter file " MRQ_NLP_SOLVER_PARAMS_FILE  " .";
+            std::cout << MRQ_PREPRINT "Trying to read nlp solver input parameter file " MRQ_NLP_SOLVER_PARAMS_FILE  " .";
             
             r = nlpParams.storeParametersFromFile( MRQ_NLP_SOLVER_PARAMS_FILE, true);
             if(r == 0)
-                    std::cout << " Done\n" ;
-                else
-                    std::cout << " Failure\n" ;
+                std::cout << " Done\n" ;
+            else if( r == optsolvers::OPT_BAD_INPUT )
+                std::cout << " Not found\n" ;
         }
         
         

@@ -476,7 +476,7 @@ namespace muriqui
         long unsigned int out_number_of_master_relaxation_solved;
         
         #if MRQ_DEBUG_MODE
-            long unsigned int out_number_of_integer_solution_repetitions; //number of repetions of integer solutions (the single repetion of integer soltuion marked as optimal is disconsidered)
+            long unsigned int out_number_of_integer_solution_repetitions; //number of repetitions of integer solutions (the single repetion of integer soltuion marked as optimal is disconsidered)
             MRQ_SolutionHistory out_integer_solution_history; //this history is to save integer solution to see if integer solutions are repeting. Here, we count even optimal integer solution
         #endif
         
@@ -999,10 +999,14 @@ namespace muriqui
     public:
         
         bool in_set_integer_vars_as_integers;
+        bool in_use_random_initial_sol;
+        double in_lower_bound_to_random_sol;
+        double in_upper_bound_to_random_sol;
         
         bool out_nlp_feasible_solution;
         int out_original_solver_return_code;
         double *out_constraint_values;
+        double *out_random_initial_sol;
         double *out_dual_sol;
         
         
@@ -1013,6 +1017,8 @@ namespace muriqui
         virtual void printParameters(std::ostream &out = std::cout) const override;
         
         virtual void resetParameters() override;
+        
+        virtual int setDoubleParameter(const char *name, const double value) override;
         
         virtual int setIntegerParameter(const char *name, const long int value) override;
         
@@ -1026,7 +1032,9 @@ namespace muriqui
         
         int allocateDualAndConstraintsArrays( const int ndual, const int m);
         
-        void desallocateDualAndConstraintsArrays();
+        void deallocateDualAndConstraintsArrays();
+        
+        void deallocateRandomInitialSolution();
     };
 
 

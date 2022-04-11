@@ -860,7 +860,7 @@ int OPT_Worhp::solve(const bool resetSol, const bool storeSol, const bool storeC
         {
             if( wsp.ScaleObj != 0.0 )
             {
-                r = prob.objEval(threadNumber, true, X, opt.F);
+                r = prob.objEval(threadNumber, true, X, opt.F, in_nl_obj_factor);
                 
                 if( prob.hasNlObj )
                     newx = false;
@@ -934,7 +934,7 @@ int OPT_Worhp::solve(const bool resetSol, const bool storeSol, const bool storeC
             const double f = wsp.ScaleObj;
             double *grad = wsp.DF.val;
             
-            r = prob.objGradEval( threadNumber, newx, X, grad );
+            r = prob.objGradEval( threadNumber, newx, X, grad, in_nl_obj_factor );
             
             if( prob.hasNlObj )
                 newx = false;
@@ -1095,7 +1095,7 @@ int OPT_Worhp::solve(const bool resetSol, const bool storeSol, const bool storeC
                 
                 
                 //prob.objFactor is already considered in prob->nlpHessianEval...
-                r = prob.nlpHessianEval(threadNumber, newx, X, prob.hasNlObj ? obj_factor : 0.0, pMu, lagH);
+                r = prob.nlpHessianEval(threadNumber, newx, X, prob.hasNlObj ? obj_factor*in_nl_obj_factor : 0.0, pMu, lagH);
                 
                 newx = false;
                 
@@ -1294,7 +1294,7 @@ int OPT_Worhp::solve(const bool resetSol, const bool storeSol, const bool storeC
     //objValue = opt.F;
     
     //worhp is a really crazy solver. We are having problems about final objective value. So, we perform a function evaluation to try get the correct value 
-    r = prob.objEval(threadNumber, true, sol, objValue);
+    r = prob.objEval(threadNumber, true, sol, objValue, in_nl_obj_factor);
     if( r != 0 )
     {
         objValue = NAN;

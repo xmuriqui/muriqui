@@ -570,7 +570,7 @@ int MRQ_LPBBExtCutPlan::run(MRQ_MINLPProb &prob, MRQ_GeneralSolverParams* milpSo
     
     
     if(in_print_level > 1)
-        printSubSolvers(true, false, false);
+        printSubSolvers(true, true, false);
     
     MRQ_malloc(intVars, nI);
     MRQ_malloc(indices, n+1);
@@ -782,7 +782,11 @@ int MRQ_LPBBExtCutPlan::run(MRQ_MINLPProb &prob, MRQ_GeneralSolverParams* milpSo
     
     //std::cout << "master solving ret code: " << master->retCode << " obj: " << master->objValue << " orig ret code: " << master->origSolverRetCode << "\n";
     
-    zl = master->getDualObjValue();
+    {
+        double myzl = master->getDualObjValue();
+        if( myzl > zl )
+            zl = myzl;
+    }
     
     if( master->feasSol )
     {
@@ -845,7 +849,11 @@ int MRQ_LPBBExtCutPlan::run(MRQ_MINLPProb &prob, MRQ_GeneralSolverParams* milpSo
     }
     else if(r == OPT_INFEASIBLE_PROBLEM)
     {
-        out_return_code = MRQ_INFEASIBLE_PROBLEM;
+        //if the problem is nonconvex, we can have found a feasible solution and, even so, solver declares infeasibility
+        if( out_best_obj < MRQ_INFINITY )
+            out_return_code = MRQ_UNDEFINED_ERROR;
+        else
+            out_return_code = MRQ_INFEASIBLE_PROBLEM;
     }
     else if(r == OPT_CALLBACK_FUNCTION_ERROR || r == MRQ_CALLBACK_FUNCTION_ERROR)
     {
@@ -970,6 +978,11 @@ int MRQ_LPBBExtCutPlan::run(MRQ_MINLPProb &prob, MRQ_GeneralSolverParams* milpSo
         
         out_number_of_nlp_probs_solved++;
         
+        /*if(nlp->isMyNLPClass())
+        {
+            ( (optsolvers::OPT_MyNLPSolver *) nlp)->generateModelFile("modelo_nlp.txt");
+        }*/
+        
         
         if( nlp->retCode == OPT_OPTIMAL_SOLUTION )
         {
@@ -980,7 +993,7 @@ int MRQ_LPBBExtCutPlan::run(MRQ_MINLPProb &prob, MRQ_GeneralSolverParams* milpSo
         }
         else
         {
-            MRQ_PRINTERRORMSGP("Error to solve the nlp refinement problem: ", nlp->retCode);
+            MRQ_PRINTERRORMSGP("Error to solve the nlp refinement problem: ", nlp->retCode << " solver error code: " << nlp->origSolverRetCode );
         }
         
     }

@@ -109,7 +109,7 @@ struct optsolvers::OPT_ObjToOptizelle: public Optizelle::ScalarValuedFunction<do
         //printf("entering at OPT_ObjToOptizelle.eval\n");
         //OPT_getchar();
         
-        int r = prob->objEval(thnumber, newx, x.data(), objvalue);
+        int r = prob->objEval(thnumber, newx, x.data(), objvalue, nlp->in_nl_obj_factor);
         
         if( r != 0 )
         {
@@ -136,7 +136,7 @@ struct optsolvers::OPT_ObjToOptizelle: public Optizelle::ScalarValuedFunction<do
         //OPT_getchar();
         
         
-        int r = prob->objGradEval(thnumber, newx, ax, agrad);
+        int r = prob->objGradEval(thnumber, newx, ax, agrad, nlp->in_nl_obj_factor);
         if( r != 0 )
         {
             OPT_PRINTERRORMSG("Error " << r << " at objective's gradient evaluation. Unfortunatelly Optizelle has no tool to inform the error");
@@ -176,7 +176,7 @@ struct optsolvers::OPT_ObjToOptizelle: public Optizelle::ScalarValuedFunction<do
         
         if( objFactor )
         {
-            int r = prob->nlpHessianEval(thnumber, newx, ax, objFactor, nullptr, lagH );
+            int r = prob->nlpHessianEval(thnumber, newx, ax, objFactor*nlp->in_nl_obj_factor, nullptr, lagH );
             
             if(r != 0)
             {

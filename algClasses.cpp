@@ -518,7 +518,12 @@ int MRQ_Algorithm::readParametersWithTypeFromFile(const char *fileName, const bo
 {
     MRQ_AlgorithmParameterSetter algSetter(this);
     
-    return OPT_readParametersWithTypeFromFile(fileName, printErrorMsgs, printFileOpenError, algSetter);
+    int r = OPT_readParametersWithTypeFromFile(fileName, printErrorMsgs, printFileOpenError, algSetter);
+    
+    if(r != 0)
+        return MRQ_BAD_PARAMETER_VALUES;
+    
+    return 0;
 }
 
 
@@ -1562,12 +1567,12 @@ int MRQ_LinearApproxAlgorithm:: allocateMemoryForPseudoPruning( unsigned int nth
 
 int MRQ_LinearApproxAlgorithm::checkAlgorithmRequirements( MRQ_MINLPProb& prob, const double* lx, const double* ux)
 {
-    if( prob.getNumberOfNLEqualityConstraints() > 0 )
+    if( prob.getNumberOfNLEqualityConstraints() > 0 || (prob.getNumberOfQuadEqualityConstraints() > 0 && !in_set_quadratics_in_master_problem) )
     {
         if(in_print_level > 1)
-            MRQ_PRINTERRORMSG("Error: Linear Approximation algorithm does not address problems having nonlinear equality constraints!\n");
+            MRQ_PRINTMSG("Warning: Linear Approximation algorithm does not address problems having nonlinear equality constraints! Trying to apply this algorithm as heuristic! \n");
             
-        return MRQ_ALG_NOT_APPLICABLE;
+        //return MRQ_ALG_NOT_APPLICABLE;
     }
     
     return 0;

@@ -682,6 +682,7 @@ namespace optsolvers
         
     public:
         
+        double in_nl_obj_factor; //factor to nonlinear objective terms
         /*absolute and relative feasibility tolerances. Just to calculate feasSol flag in some nlp solvers.*/
         double in_absolute_feas_tol;
         double in_relative_feas_tol;
@@ -717,6 +718,12 @@ namespace optsolvers
         virtual int getObjNLFlag(bool &flag) = 0;
         
         virtual OPT_SOLVERTYPE getSolverType();
+        
+        virtual int initSolverEnv(const int maxConstrs, const int maxVars, const int maxQuadNz) override
+        {
+            in_nl_obj_factor = 1.0;
+            return 0;
+        }
         
         virtual int removeConstraints(const int ninds, const int* indices );
         
@@ -827,7 +834,7 @@ namespace optsolvers
         
         //virtual void initialize();
         
-        virtual int setVariableType( const int index, const OPT_VARTYPE varType );
+        virtual int setVariableType( const int index, const OPT_VARTYPE varType ) override;
         
         
         

@@ -384,7 +384,7 @@ int optsolvers::OPT_getValuesFromCompleteLagHessian( const OPT_MINLPProb& prob, 
 
 
 
-int optsolvers::OPT_evalCompleteLagrangianHessian( const int thnumber, const bool newx, const double *x, const OPT_MINLPProb& prob, OPT_SparseMatrix& lagH, const int mquad, const int *quadIndex, const double obj_factor, const double *lambda, const bool* auxCEval, const int newm, const int nNzRowsLagH, const int *nzRowsLagH, const int *sizeColsNzLagH, int **colsNzRowLagH, double *auxConstrsVars, double *auxConstrs, int &sizeValues, double *values)
+int optsolvers::OPT_evalCompleteLagrangianHessian( const int thnumber, const bool newx, const double *x, const OPT_MINLPProb& prob, OPT_SparseMatrix& lagH, const int mquad, const int *quadIndex, const double obj_factor, const double aditional_nl_obj_factor, const double *lambda, const bool* auxCEval, const int newm, const int nNzRowsLagH, const int *nzRowsLagH, const int *sizeColsNzLagH, int **colsNzRowLagH, double *auxConstrsVars, double *auxConstrs, int &sizeValues, double *values)
 {
     const double realObjF = prob.objFactor * obj_factor;
     
@@ -490,7 +490,7 @@ int optsolvers::OPT_evalCompleteLagrangianHessian( const int thnumber, const boo
         {
             //prob->objFactor is already considered in prob->nlpHessianEval...
             
-            int r = prob.nlpHessianEval(thnumber, newx, x, prob.hasNlObj ? obj_factor : 0.0, plambda, lagH);
+            int r = prob.nlpHessianEval(thnumber, newx, x, prob.hasNlObj ? obj_factor * aditional_nl_obj_factor : 0.0, plambda, lagH);
             
             if( r != 0 )
             {

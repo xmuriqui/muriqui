@@ -1308,20 +1308,6 @@ void MIP_MINLPProb::getConstraintStatistcs(int* ml, int* mq, int* mnl) const
 }
 
 
-int MIP_MINLPProb::getNumberOfQuadConstraints() const
-{
-    decltype(m) mq = 0;
-    
-    for(decltype(m) i = 0; i < m; i++)
-    {
-        if( !nlConstr[i] && QC[i].getNumberOfElements() > 0)
-            mq++;
-    }
-    
-    return mq;
-}
-
-
 int MIP_MINLPProb::getNumberOfLinearConstraints(void) const
 {
     decltype(m) ml = 0;
@@ -1397,6 +1383,34 @@ int MIP_MINLPProb::getNumberOfQuadMatricesInConstrs( void) const
     for(decltype(m) i = 0; i < m; i++)
     {
         if( QC[i].getNumberOfElements() > 0 )
+            mq++;
+    }
+    
+    return mq;
+}
+
+
+int MIP_MINLPProb::getNumberOfQuadConstraints() const
+{
+    decltype(m) mq = 0;
+    
+    for(decltype(m) i = 0; i < m; i++)
+    {
+        if( !nlConstr[i] && QC[i].getNumberOfElements() > 0)
+            mq++;
+    }
+    
+    return mq;
+}
+
+
+int MIP_MINLPProb::getNumberOfQuadEqualityConstraints() const
+{
+    decltype(m) mq = 0;
+    
+    for(decltype(m) i = 0; i < m; i++)
+    {
+        if( !nlConstr[i] && QC[i].getNumberOfElements() > 0 && lc[i] == uc[i])
             mq++;
     }
     
@@ -4212,7 +4226,7 @@ int MIP_MINLPProb::nlObjAndConstraintsEval(const bool evalObj, const bool evalCo
 
 
 
-int MIP_MINLPProb::objEval(const int threadnumber, const bool newx, const double* x, double& value) const
+int MIP_MINLPProb::objEval(const int threadnumber, const bool newx, const double* x, double& value,  double aditionalNlObjFactor) const
 {
     double v;
     
@@ -4227,6 +4241,9 @@ int MIP_MINLPProb::objEval(const int threadnumber, const bool newx, const double
             #endif
             return r;
         }
+        
+        if( aditionalNlObjFactor != 1.0 )
+            value *= aditionalNlObjFactor;
         
         value += d;
     }
@@ -4264,7 +4281,7 @@ int MIP_MINLPProb::objEval(const int threadnumber, const bool newx, const double
 }
 
 
-int MIP_MINLPProb::objGradEval(const int threadnumber, const bool newx, const double *x, double *values) const
+int MIP_MINLPProb::objGradEval(const int threadnumber, const bool newx, const double *x, double *values, double additionalNlObjFactor) const
 {
     int r;
     
@@ -4281,10 +4298,14 @@ int MIP_MINLPProb::objGradEval(const int threadnumber, const bool newx, const do
             return r;
         }
         
+        if( additionalNlObjFactor != 1.0 )
+            MIP_multiplyAllArray(n, values, additionalNlObjFactor);
+        
         if( objLinearPart )
         {
             MIP_accumulateArray(n, c, values);
         }
+        
     }
     else
     {

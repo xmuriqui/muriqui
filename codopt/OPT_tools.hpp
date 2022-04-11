@@ -749,7 +749,7 @@ namespace optsolvers{
     
     
     
-    int OPT_evalCompleteLagrangianHessian(const int thnumber, const bool newx, const double *x, const OPT_MINLPProb& prob, OPT_SparseMatrix& lagH, const int mquad, const int *quadIndex, const double obj_factor, const double *lambda, const bool* auxCEval, const int newm, const int nNzRowsLagH, const int *nzRowsLagH, const int *sizeColsNzLagH, int **colsNzRowLagH, double *auxConstrsVars, double *auxConstrs, int &sizeValues, double *values);
+    int OPT_evalCompleteLagrangianHessian(const int thnumber, const bool newx, const double *x, const OPT_MINLPProb& prob, OPT_SparseMatrix& lagH, const int mquad, const int *quadIndex, const double obj_factor, const double aditional_nl_obj_factor, const double *lambda, const bool* auxCEval, const int newm, const int nNzRowsLagH, const int *nzRowsLagH, const int *sizeColsNzLagH, int **colsNzRowLagH, double *auxConstrsVars, double *auxConstrs, int &sizeValues, double *values);
     
     
     

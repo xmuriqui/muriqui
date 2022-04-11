@@ -719,7 +719,11 @@ int MRQ_LPBBExtSupHypPlane::run(MRQ_MINLPProb &prob, MRQ_GeneralSolverParams* mi
     
     r = master->solve();
     
-    zl = master->getDualObjValue();
+    {
+        double myzl = master->getDualObjValue();
+        if( myzl > zl )
+            zl = myzl;
+    }
     
     if( master->feasSol )
     {
@@ -746,7 +750,11 @@ int MRQ_LPBBExtSupHypPlane::run(MRQ_MINLPProb &prob, MRQ_GeneralSolverParams* mi
     }
     else if(r == OPT_INFEASIBLE_PROBLEM)
     {
-        out_return_code = MRQ_INFEASIBLE_PROBLEM;
+        //if the problem is nonconvex, we can have found a feasible solution and, even so, solver declares infeasibility
+        if( out_best_obj < MRQ_INFINITY )
+            out_return_code = MRQ_UNDEFINED_ERROR;
+        else
+            out_return_code = MRQ_INFEASIBLE_PROBLEM;
     }
     else if(r == OPT_CALLBACK_FUNCTION_ERROR || r == MRQ_CALLBACK_FUNCTION_ERROR)
     {

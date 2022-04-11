@@ -306,8 +306,8 @@ int muriqui::MRQ_ampl(char *stub, const bool printAlgParameters, const bool prin
         //if( paramData.algCode == MRQ_UNDEFINED_ALG )
             //paramData.algCode = MRQ_BB_ALG;
         
-        
-        alg = MRQ_newAlgorithm( paramData.algCode, prob.getNumberOfNLEqualityConstraints() );
+        //that is not the ideal, but if the model has uadratic constraints, we forbid to use linear approximation algoithms (although user could set parameter in_set_quadratics_in_master_problem, I cannot check it here (so much work to low value of beneits) )
+        alg = MRQ_newAlgorithm( paramData.algCode, prob.getNumberOfNLEqualityConstraints() + prob.getNumberOfQuadEqualityConstraints() );
         MRQ_IFMEMERRORGOTOLABEL(!alg, code, termination);
         
         
@@ -342,35 +342,35 @@ int muriqui::MRQ_ampl(char *stub, const bool printAlgParameters, const bool prin
         std::cout << MRQ_PREPRINT "Done\n" ;
         
         {
-            std::cout << MRQ_PREPRINT "Trying read input parameter file " MRQ_MURIQUI_PARAMS_FILE ".";
+            std::cout << MRQ_PREPRINT "Trying to read input parameter file " MRQ_MURIQUI_PARAMS_FILE ".";
             
             int r = alg->readParametersWithTypeFromFile( MRQ_MURIQUI_PARAMS_FILE, true);
             if(r == 0)
                 std::cout << " Done\n" ;
-            else
-                std::cout << " Failure\n" ;
+            else if(r == MRQ_BAD_PARAMETER_VALUES )
+                std::cout << " Not found\n" ;
         }
         
         
         {
-            std::cout << MRQ_PREPRINT "Trying read milp solver input parameter file " MRQ_MILP_SOLVER_PARAMS_FILE  " .";
+            std::cout << MRQ_PREPRINT "Trying to read milp solver input parameter file " MRQ_MILP_SOLVER_PARAMS_FILE  " .";
             
             int r = sparam1->storeParametersFromFile( MRQ_MILP_SOLVER_PARAMS_FILE, true);
             if(r == 0)
                 std::cout << " Done\n" ;
-            else
-                std::cout << " Failure\n" ;
+            else if( r == optsolvers::OPT_BAD_INPUT )
+                std::cout << " Not found\n" ;
         }
         
         
         {
-            std::cout << MRQ_PREPRINT "Trying read nlp solver input parameter file " MRQ_NLP_SOLVER_PARAMS_FILE  " .";
+            std::cout << MRQ_PREPRINT "Trying to read nlp solver input parameter file " MRQ_NLP_SOLVER_PARAMS_FILE  " .";
             
             int r = sparam2->storeParametersFromFile( MRQ_NLP_SOLVER_PARAMS_FILE, true);
             if(r == 0)
                     std::cout << " Done\n" ;
-                else
-                    std::cout << " Failure\n" ;
+            else if( r == optsolvers::OPT_BAD_INPUT )
+                    std::cout << " Not found\n" ;
         }
         
         
@@ -394,8 +394,8 @@ int muriqui::MRQ_ampl(char *stub, const bool printAlgParameters, const bool prin
         
         printf("_________________________________________________________________________________\n");
         printf("Problem: %s Algorithm: %s (%d) \nReturn code: %d lower bound: %0.10f obj function: %0.10f \ntime: %0.2f cpu time: %0.2f iters: %ld\n", stub, alg->getAlgorithmName().c_str(), alg->out_algorithm,  alg->out_return_code, alg->out_lower_bound, alg->out_best_obj, alg->out_clock_time, alg->out_cpu_time, alg->out_number_of_iterations);
-        //for(i = 0; i < n; i++)
-            //printf("x[%d]: %f\n", i, ecp.out_best_sol[i]);
+        for(int i = 0; i < prob.n; i++)
+            printf("\tx[%d]: %f\n", i, alg->out_best_sol[i]);
         printf("_________________________________________________________________________________\n");
     
         #if MRQ_SAVE_OUTPUT_FILE

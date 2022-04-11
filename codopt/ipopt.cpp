@@ -585,7 +585,7 @@ bool OPT_MyProblemToIpopt::get_starting_point(Index n, bool init_x, Number* x, b
     {
         const double *lx = prob->lx;
         const double *ux = prob->ux;
-            
+        
         if( std::isnan( xInit[0] ) )
         {
             //double l, u;
@@ -742,7 +742,7 @@ bool OPT_MyProblemToIpopt::eval_f(Index n, const Number* x, bool new_x, Number& 
     if( new_x )
         newx = true;
     
-    r = prob->objEval(thnumber, newx, x, obj_value);
+    r = prob->objEval(thnumber, newx, x, obj_value, nlp->in_nl_obj_factor);
     
     //std:: cout << "obj_value: " << obj_value << std::endl;
     
@@ -790,7 +790,7 @@ bool OPT_MyProblemToIpopt::eval_grad_f(Index n, const Number* x, bool new_x, Num
     if( new_x )
         newx = true;
     
-    r = prob->objGradEval(thnumber, newx, x, grad_f);
+    r = prob->objGradEval(thnumber, newx, x, grad_f, nlp->in_nl_obj_factor);
     
     if( prob->hasNlObj )
         newx = false;
@@ -1190,8 +1190,7 @@ bool OPT_MyProblemToIpopt::eval_h(Index n, const Number* x, bool new_x, Number o
         double *auxValues2 = nlp->auxValues2;
         
         
-        
-        int r = OPT_evalCompleteLagrangianHessian( thnumber, newx, x, *prob, lagH, mquad, quadIndex, obj_factor, lambda, auxCEval, m, nNzRowsLagH, nzRowsLagH, sizeColsNzLagH, colsNzRowLagH, auxValues, auxValues2, nzs, values);
+        int r = OPT_evalCompleteLagrangianHessian( thnumber, newx, x, *prob, lagH, mquad, quadIndex, obj_factor, nlp->in_nl_obj_factor, lambda, auxCEval, m, nNzRowsLagH, nzRowsLagH, sizeColsNzLagH, colsNzRowLagH, auxValues, auxValues2, nzs, values);
         
         if(r != 0)
         {
@@ -2170,7 +2169,7 @@ int OPT_Ipopt::solve(const bool resetSol, const bool storeSol, const bool storeC
         
         if( feasSol )
         {
-            int r = prob.objEval(threadNumber, !prob.hasNlConstrs, sol, objValue );
+            int r = prob.objEval(threadNumber, !prob.hasNlConstrs, sol, objValue, in_nl_obj_factor );
             
             if(r != 0)
             {

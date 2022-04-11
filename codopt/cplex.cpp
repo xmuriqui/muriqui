@@ -871,10 +871,18 @@ int OPT_Cplex::solve(const bool resetSol, const bool storeSol, const bool storeC
         
         r = getSolution(true, storeSol, storeConstrs, storeDualSol);
         
-        //get dual bound on integer problems
-        CPXgetbestobjval( env, prob, &dualObjValue );
-        
-        dualObjValue += objConstant;
+        /*get dual bound on integer problems. If the problem is infeasible,
+         */
+        {
+            double myDualObjV = -INFINITY;
+            
+            int r2 = CPXgetbestobjval( env, prob, &myDualObjV );
+            if(r2)
+                OPT_PRINTERRORMSGP("Error at CPXgetbestobjval: ", r2);
+            
+            if( -OPT_INFINITY < myDualObjV && myDualObjV < OPT_INFINITY )
+                dualObjValue = myDualObjV + objConstant;
+        }
         
         origSolverRetCode = status;
         

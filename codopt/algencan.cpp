@@ -108,7 +108,8 @@ static void OPT_algencanEvalObjAndConstrs(int n, double *x, double *f, int m, do
     const unsigned int thnumber = algData->thnumber;
     const bool *constrEval = algData->constrEval;
     double *g = algData->auxConstr;
-    OPT_MINLPProb *prob = algData->prob;
+    OPT_Algencan *nlp = algData->nlp;
+    OPT_MINLPProb *prob = &nlp->prob;
     
     
     int r;
@@ -116,7 +117,7 @@ static void OPT_algencanEvalObjAndConstrs(int n, double *x, double *f, int m, do
     //for(int i = 0; i < n; i++)
         //std::cout << "x["<<i<<"]: " << x[i] << "\n";
     
-    r = prob->objEval(thnumber, true, x, *f);
+    r = prob->objEval(thnumber, true, x, *f, nlp->in_nl_obj_factor);
     if(r != 0)
     {
         #if OPT_PRINT_CALLBACK_ERROR_MSG
@@ -228,7 +229,8 @@ static void OPT_algencanEvalObjAndConstrGrads(int n, double *x, double *grad, in
     int * const *colsNzRowJac = algData->colsNzRowJac;
     double *auxVars = algData->auxVars;
     
-    OPT_MINLPProb *prob = algData->prob;
+    OPT_Algencan *nlp = algData->nlp;
+    OPT_MINLPProb *prob = &nlp->prob;
     //const int orign = prob->n;
     
     bool newx = true;
@@ -416,7 +418,7 @@ static void OPT_algencanEvalObjAndConstrGrads(int n, double *x, double *grad, in
     
     
     //do not eval bjective gradient first because we use grad as an auxiliary array
-    r = prob->objGradEval(thnumber, newx, x, grad);
+    r = prob->objGradEval(thnumber, newx, x, grad, nlp->in_nl_obj_factor);
     if(r != 0)
     {
         #if OPT_PRINT_CALLBACK_ERROR_MSG
@@ -446,7 +448,9 @@ static void OPT_algencanEvalHessVector(int n, double *x, int m, double *lambda, 
     OPT_Algencan::OPT_MyData *algData = threadAlgData[std::this_thread::get_id()];
     const unsigned int thnumber = algData->thnumber;
     //const bool *constrEval = algData->constrEval;
-    OPT_MINLPProb *prob = algData->prob;
+    OPT_Algencan *nlp = algData->nlp;
+    OPT_MINLPProb *prob = &nlp->prob;
+    
     
     const double realObjF = prob->objFactor * scalef;
     
@@ -533,7 +537,7 @@ static void OPT_algencanEvalHessVector(int n, double *x, int m, double *lambda, 
     {
         //prob->objFactor is already considered in prob->nlpHessianEval...
         
-        int r = prob->nlpHessianEval(thnumber, true, x, prob->hasNlObj ? scalef : 0.0, mylambda, lagH);
+        int r = prob->nlpHessianEval(thnumber, true, x, prob->hasNlObj ? scalef * nlp->in_nl_obj_factor : 0.0, mylambda, lagH);
         if(r != 0)
         {
             #if OPT_PRINT_CALLBACK_ERROR_MSG
@@ -562,13 +566,14 @@ static void OPT_algencanObjEval(int n, double *x, double *f, int *flag)
     OPT_Algencan::OPT_MyData *algData = threadAlgData[std::this_thread::get_id()];
     const unsigned int thnumber = algData->thnumber;
     //const bool *constrEval = algData->constrEval;
-    OPT_MINLPProb *prob = algData->prob;
+    OPT_Algencan * nlp = algData->nlp;
+    OPT_MINLPProb *prob = &(nlp->prob);
     
     *flag = 0;
     
     int r;
     
-    r = prob->objEval(thnumber, true, x, *f);
+    r = prob->objEval(thnumber, true, x, *f, nlp->in_nl_obj_factor);
     if(r != 0)
     {
         #if OPT_PRINT_CALLBACK_ERROR_MSG
@@ -589,13 +594,14 @@ static void OPT_algencanObjGradEval(int n, double *x, double *g, int *flag)
     OPT_Algencan::OPT_MyData *algData = threadAlgData[std::this_thread::get_id()];
     const unsigned int thnumber = algData->thnumber;
     //const bool *constrEval = algData->constrEval;
-    OPT_MINLPProb *prob = algData->prob;
+    OPT_Algencan *nlp = algData->nlp;
+    OPT_MINLPProb *prob = &nlp->prob;
     //const int orign = prob->n;
     
     
     *flag = 0;
     
-    int r = prob->objGradEval(thnumber, true, x, g);
+    int r = prob->objGradEval(thnumber, true, x, g, nlp->in_nl_obj_factor);
     if(r != 0)
     {
         #if OPT_PRINT_CALLBACK_ERROR_MSG
@@ -654,7 +660,8 @@ static void OPT_algencanEvalhl(int n, double *x, int m, double *lambda, double s
     OPT_Algencan::OPT_MyData *algData = threadAlgData[std::this_thread::get_id()];
     const unsigned int thnumber = algData->thnumber;
     //const bool *constrEval = algData->constrEval;
-    OPT_MINLPProb *prob = algData->prob;
+    OPT_Algencan *nlp = algData->nlp;
+    OPT_MINLPProb *prob = &nlp->prob;
     double *auxVars = algData->auxVars;
     
     const bool *constrEval = algData->constrEval;
@@ -756,7 +763,7 @@ static void OPT_algencanEvalhl(int n, double *x, int m, double *lambda, double s
     {
         //prob->objFactor is already considered in prob->nlpHessianEval...
         
-        int r = prob->nlpHessianEval(thnumber, true, x, prob->hasNlObj ? scalef : 0.0, mylambda, lagH);
+        int r = prob->nlpHessianEval(thnumber, true, x, prob->hasNlObj ? scalef * nlp->in_nl_obj_factor: 0.0, mylambda, lagH);
         if(r != 0)
         {
             #if OPT_PRINT_CALLBACK_ERROR_MSG
@@ -1628,7 +1635,7 @@ int OPT_Algencan::solve(const bool resetSol, const bool storeSol, const bool sto
     data.quadIndex = quadIndex;
     data.auxVars = auxValues;
     data.auxConstr = auxValues2;
-    data.prob = &prob; // we must put it here because we can have a thread having more to one algencan object to solve...
+    data.nlp = this; // we must put it here because we can have a thread having more to one algencan object to solve...
     
     data.sizeColsNzRowJac = sizeColsNzRowJac;
     data.colsNzRowJac = colsNzRowJac;

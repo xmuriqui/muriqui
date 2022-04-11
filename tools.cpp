@@ -120,7 +120,7 @@ int muriqui::MRQ_tryReadAlgChoiceFile(const char *algChoiceFileName, int printLe
     
     
     if( printLevel > 0 )
-        std::cout << MRQ_PREPRINT "Trying reading algorithm choice file " << algChoiceFileName << " . ";
+        std::cout << MRQ_PREPRINT "Trying to read algorithm choice file " << algChoiceFileName << " . ";
     
     
     algFile = fopen( MRQ_MURIQUI_ALG_CHOICE_FILE, "r" );
@@ -164,7 +164,7 @@ int muriqui::MRQ_tryReadAlgChoiceFile(const char *algChoiceFileName, int printLe
         else
         {
             if(printLevel > 0)
-                std::cout << " Failure!\n";
+                std::cout << " Invalid code!\n";
             return MRQ_VALUE_ERROR;
         }
     }

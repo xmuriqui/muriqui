@@ -19,8 +19,9 @@ using namespace optsolvers;
 
 MRQ_ContinuousRelax::MRQ_ContinuousRelax():MRQ_Algorithm()
 {
-    out_dual_sol = NULL;
-    out_constraint_values = NULL;
+    out_dual_sol = nullptr;
+    out_constraint_values = nullptr;
+    out_random_initial_sol = nullptr;
     
     resetParameters();
     resetOutput();
@@ -32,14 +33,15 @@ MRQ_ContinuousRelax::MRQ_ContinuousRelax():MRQ_Algorithm()
 
 MRQ_ContinuousRelax::~MRQ_ContinuousRelax()
 {
-    desallocateDualAndConstraintsArrays();
+    deallocateDualAndConstraintsArrays();
+    deallocateRandomInitialSolution();
 }
 
 
 
 int MRQ_ContinuousRelax:: allocateDualAndConstraintsArrays( const int ndual, const int m)
 {
-    desallocateDualAndConstraintsArrays();
+    deallocateDualAndConstraintsArrays();
     
     MRQ_malloc(out_dual_sol, ndual); //out_dual_sol = (double *) malloc( ndual * sizeof(double) );
     MRQ_malloc(out_constraint_values, m); //out_constraint_values = (double *) malloc( m * sizeof(double) );
@@ -53,12 +55,17 @@ int MRQ_ContinuousRelax:: allocateDualAndConstraintsArrays( const int ndual, con
 
 
 
-void MRQ_ContinuousRelax:: desallocateDualAndConstraintsArrays()
+void MRQ_ContinuousRelax:: deallocateDualAndConstraintsArrays()
 {
     MRQ_secFree( out_dual_sol);
     MRQ_secFree( out_constraint_values );
 }
 
+
+void MRQ_ContinuousRelax:: deallocateRandomInitialSolution()
+{
+    MRQ_secFree( out_random_initial_sol );
+}
 
 
 void MRQ_ContinuousRelax:: printParameters( std::ostream &out) const
@@ -67,7 +74,10 @@ void MRQ_ContinuousRelax:: printParameters( std::ostream &out) const
     
     out << "\n"
     
-    MRQ_STRFFATT(in_set_integer_vars_as_integers) << "\n";
+    MRQ_STRFFATT(in_set_integer_vars_as_integers) << "\n"
+    MRQ_STRFFATT(in_use_random_initial_sol) << "\n"
+    MRQ_STRFFATT(in_lower_bound_to_random_sol) << "\n"
+    MRQ_STRFFATT(in_upper_bound_to_random_sol) << "\n";
 }
 
 
@@ -76,6 +86,10 @@ void MRQ_ContinuousRelax::resetParameters()
     MRQ_Algorithm::resetParameters();
     
     in_set_integer_vars_as_integers = false;
+    in_use_random_initial_sol = false;
+    in_lower_bound_to_random_sol = -100;
+    in_upper_bound_to_random_sol = 100;
+    
     in_number_of_threads = 1;
 }
 
@@ -90,9 +104,28 @@ int MRQ_ContinuousRelax::setIntegerParameter( const char *name, const long int v
     ret = 0;
     
     if( MRQ_setAtt<bool>( MRQ_STRATT(in_set_integer_vars_as_integers), name, value ) == 0 );
+    else if( MRQ_setAtt<bool>( MRQ_STRATT(in_use_random_initial_sol), name, value ) == 0 );
     else
         ret = MRQ_NAME_ERROR;
     
+    
+    return ret;
+}
+
+
+int MRQ_ContinuousRelax::setDoubleParameter(const char *name, const double value)
+{
+    int ret = MRQ_Algorithm::setDoubleParameter(name, value);
+    
+    if( ret == 0 )
+        return 0;
+    
+    ret = 0;
+    
+    if( MRQ_setAtt( MRQ_STRATT(in_lower_bound_to_random_sol), name, value ) == 0 );
+    else if( MRQ_setAtt( MRQ_STRATT(in_upper_bound_to_random_sol), name, value ) == 0 );
+    else
+        ret = MRQ_NAME_ERROR;
     
     return ret;
 }
@@ -103,7 +136,8 @@ void MRQ_ContinuousRelax::resetOutput()
     MRQ_Algorithm::resetOutput();
     
     
-    desallocateDualAndConstraintsArrays();
+    deallocateDualAndConstraintsArrays();
+    deallocateRandomInitialSolution();
     
     out_original_solver_return_code = INT_MIN;
     out_nlp_feasible_solution = false;
@@ -214,8 +248,56 @@ int MRQ_ContinuousRelax::run(MRQ_MINLPProb &prob, MRQ_GeneralSolverParams* milpS
     if( in_use_initial_solution && xInit)
     {
         r = nlp->setInitialSolution(xInit, NULL, NULL);
-        MRQ_IFERRORGOTOLABEL(r, out_return_code, MRQ_NLP_SOLVER_ERROR, termination)
+        MRQ_IFERRORGOTOLABEL(r, out_return_code, MRQ_NLP_SOLVER_ERROR, termination);
     }
+    
+    if( in_use_random_initial_sol )
+    {
+        auto const n = prob.n;
+        
+        double *initialSol;
+        MRQ_Random random;
+        
+        random.setSeed();
+        
+        deallocateRandomInitialSolution();
+        MRQ_malloc( out_random_initial_sol, n );
+        MRQ_IFMEMERRORGOTOLABEL( !out_random_initial_sol, out_return_code, termination );
+        
+        initialSol = out_random_initial_sol;
+        
+        
+        for(int i = 0; i < n; i++)
+        {
+            double lbound;
+            double ubound;
+            
+            if( in_lower_bound_to_random_sol < ux[i] )
+                lbound = MRQ_max( lx[i], in_lower_bound_to_random_sol );
+            else
+                lbound = lx[i];
+            
+            if( in_upper_bound_to_random_sol > lx[i] )
+                ubound = MRQ_min( ux[i], in_upper_bound_to_random_sol );
+            else
+                ubound = ux[i];
+            
+            
+            initialSol[i] = lbound + (ubound - lbound)*  random.random();
+        }
+        
+        if(in_print_level > 6)
+        {
+            MRQ_PRINTMSG("Random Initial Solution to NLP Solver:\n")
+            for(int i = 0; i < n; i++)
+                std::cout << "\t" << initialSol[i];
+            std::cout << "\n";
+        }
+        
+        r = nlp->setInitialSolution(initialSol, NULL, NULL);
+        MRQ_IFERRORGOTOLABEL(r, out_return_code, MRQ_NLP_SOLVER_ERROR, termination);
+    }
+    
     
     MRQ_secFree(plc);
     
@@ -235,9 +317,6 @@ int MRQ_ContinuousRelax::run(MRQ_MINLPProb &prob, MRQ_GeneralSolverParams* milpS
             intSol = true;
         }
         
-        if(in_fix_int_vars_from_nlp_relax_sol)
-        {
-        }
     }
     
     out_original_solver_return_code = nlp->origSolverRetCode;

@@ -68,15 +68,15 @@ namespace optsolvers
         void initialize(const int noriginal, const int moriginal, const int nzjacoriginal, const int nzhessoriginal, minlpproblem::MIP_NonLinearEval *originalEval);
         
         
-        virtual int eval_nl_obj_part(const int threadnumber, const int n, const bool newx, const double *x, double &value);
+        virtual int eval_nl_obj_part(const int threadnumber, const int n, const bool newx, const double *x, double &value) override;
         
-        virtual int eval_nl_constrs_part(const int threadnumber, const int n, const int m, const bool newx, const bool *constrEval, const double *x, double *values);
+        virtual int eval_nl_constrs_part(const int threadnumber, const int n, const int m, const bool newx, const bool *constrEval, const double *x, double *values) override;
         
-        virtual int eval_grad_nl_obj_part(const int threadnumber, const int n, const bool newx, const double *x, double *values);
+        virtual int eval_grad_nl_obj_part(const int threadnumber, const int n, const bool newx, const double *x, double *values) override;
         
-        virtual int eval_grad_nl_constrs_part(const int threadnumber, const int n, const int m, const int nz, const bool newx, const bool *constrEval, const double *x, minlpproblem::MIP_SparseMatrix& jacobian);
+        virtual int eval_grad_nl_constrs_part(const int threadnumber, const int n, const int m, const int nz, const bool newx, const bool *constrEval, const double *x, minlpproblem::MIP_SparseMatrix& jacobian) override;
         
-        virtual int eval_hessian_nl_lagran_part(const int threadnumber, const int n, const int m, const int nz, const bool newx, const double *x, const double objFactor, const double *lambda, minlpproblem::MIP_SparseMatrix& hessian);
+        virtual int eval_hessian_nl_lagran_part(const int threadnumber, const int n, const int m, const int nz, const bool newx, const double *x, const double objFactor, const double *lambda, minlpproblem::MIP_SparseMatrix& hessian) override;
     };
     
     

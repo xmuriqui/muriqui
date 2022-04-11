@@ -383,19 +383,22 @@ int MRQ_MasterMILPProb::setProblemBase(const int thnumber, MRQ_MINLPProb &prob, 
     {
         //if the problem has a linear objective function, we still use the alpha auxiliary variable...
         
+        k = 1;
+        cols[0] = n;
+        values[0] = -1.0;
+        double rhs = -prob.getObjConstant();
+        
+        
         if( prob.hasLinCoefObj() )
         {
             const double *c = prob.c;
-            double rhs = -prob.getObjConstant();
             
             #if MRQ_DEBUG_MODE
                 //we must have at least one auxiliary variable
                 assert(nauxvars > 0);
             #endif
             
-            k = 1;
-            cols[0] = n;
-            values[0] = -1.0;
+            
             
             for( int i = 0; i < n; i++ )
             {
@@ -406,21 +409,23 @@ int MRQ_MasterMILPProb::setProblemBase(const int thnumber, MRQ_MINLPProb &prob, 
                     k++;
                 }
             }
-            
-            if( of != 1.0 )
-            {
-                rhs *= of;
-                //for( int i = 1; i < k; i++ )
-                    //values[i] *= of;
-                MRQ_multiplyAllArray(k-1, &values[1], of );
-            }
-            
-            r = master->resetConstraintLinearPart( mmaster-1, k, cols, values );
-            MRQ_IFERRORGOTOLABEL(r, code, MRQ_MILP_SOLVER_ERROR, termination);
-            
-            r = master->setConstraintBounds( mmaster-1, -OPT_INFINITY, rhs );
-            MRQ_IFERRORGOTOLABEL(r, code, MRQ_MILP_SOLVER_ERROR, termination);
         }
+
+            
+        if( of != 1.0 )
+        {
+            rhs *= of;
+            //for( int i = 1; i < k; i++ )
+                //values[i] *= of;
+            MRQ_multiplyAllArray(k-1, &values[1], of );
+        }
+        
+        r = master->resetConstraintLinearPart( mmaster-1, k, cols, values );
+        MRQ_IFERRORGOTOLABEL(r, code, MRQ_MILP_SOLVER_ERROR, termination);
+        
+        r = master->setConstraintBounds( mmaster-1, -OPT_INFINITY, rhs );
+        MRQ_IFERRORGOTOLABEL(r, code, MRQ_MILP_SOLVER_ERROR, termination);
+    
         
     }
     

@@ -60,7 +60,7 @@ int optsolvers::OPT_knitroObjConstrF (const int             evalRequestCode,
     
     
     
-    r = prob.objEval(thnumber, newx, x, *obj);
+    r = prob.objEval(thnumber, newx, x, *obj, myknitro->in_nl_obj_factor);
     if( r != 0 )
     {
         #if OPT_PRINT_CALLBACK_ERROR_MSG
@@ -201,7 +201,7 @@ int  optsolvers::OPT_knitroGrads (const int             evalRequestCode,
     
     
     //objective function. We eval after constraints because we use objGrad as temp array...
-    r = prob.objGradEval( thnumber, newx, x, objGrad );
+    r = prob.objGradEval( thnumber, newx, x, objGrad, myknitro->in_nl_obj_factor );
     if( r != 0 )
     {
         #if OPT_PRINT_CALLBACK_ERROR_MSG
@@ -243,7 +243,7 @@ int  optsolvers::OPT_knitroHess (const int             evalRequestCode,
     const bool *auxCEval = myknitro->auxCEval;
     const int *quadIndex = myknitro->quadIndex;
     
-    const double objFactor = evalRequestCode == KTR_RC_EVALH_NO_F ? 0.0 : 1.0 ; //prob->objFactor is already considered in prob->nlpHessianEval...
+    const double objFactor = evalRequestCode == KTR_RC_EVALH_NO_F ? 0.0 : 1.0  ; //prob->objFactor is already considered in prob->nlpHessianEval...
     
     OPT_SparseMatrix &lagH = prob.lagH;
     
@@ -264,7 +264,7 @@ int  optsolvers::OPT_knitroHess (const int             evalRequestCode,
     int nzs;
     
     
-    int r = OPT_evalCompleteLagrangianHessian(thnumber, true, x, prob, lagH, mquad, quadIndex, objFactor, lambda, auxCEval, m, nNzRowsLagH, nzRowsLagH, sizeColsNzLagH, colsNzRowLagH, auxValues, auxValues2, nzs, hessian );
+    int r = OPT_evalCompleteLagrangianHessian(thnumber, true, x, prob, lagH, mquad, quadIndex, objFactor,  myknitro->in_nl_obj_factor, lambda, auxCEval, m, nNzRowsLagH, nzRowsLagH, sizeColsNzLagH, colsNzRowLagH, auxValues, auxValues2, nzs, hessian );
     
     if(r != 0)
     {

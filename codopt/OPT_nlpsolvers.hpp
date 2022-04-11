@@ -77,7 +77,6 @@ namespace optsolvers{
         bool nlObj; //flag to nonlinear objective function
         bool hasNLConstrs;
         bool *nlConstr; //flags to nonlinear constraints...
-        double nlObjFactor; //we just use that due to obj factor  
         
         
         // __ methods from LPSolver __
@@ -101,6 +100,8 @@ namespace optsolvers{
             MSKtask_t    task;
         #endif
         
+        //double nlObjFactor; //we just use that due to obj factor  
+            
         
         OPT_Mosek();
         
@@ -902,7 +903,8 @@ namespace optsolvers{
             int *quadIndex;
             double *auxVars;
             double *auxConstr;
-            OPT_MINLPProb *prob;
+            //OPT_MINLPProb *prob;
+            OPT_Algencan *nlp;
             
             int *sizeColsNzRowJac;
             int **colsNzRowJac; 
@@ -924,7 +926,7 @@ namespace optsolvers{
                 quadIndex = NULL;
                 auxVars = NULL;
                 auxConstr = NULL;
-                prob = NULL;
+                nlp = NULL;
                 
                 sizeColsNzRowJac = NULL;
                 colsNzRowJac = NULL;

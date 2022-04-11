@@ -2726,6 +2726,8 @@ void OPT_NLPSolver::initialize()
 {
     OPT_QCPSolver::initialize();
     
+    in_nl_obj_factor = 1.0;
+    
     in_absolute_feas_tol = 1e-6;
     in_relative_feas_tol = 1e-6;
     
@@ -2948,7 +2950,10 @@ int OPT_NLPSolver::setProblemFrom( const MIP_MINLPProb& prob, const bool setObj,
     
     
     if( setObj && prob.hasObjNLTerm() )
+    {
         setObjNLFlag(true);
+        in_nl_obj_factor = prob.getObjFactor(); //we already considered the objfactor to set Q and c
+    }
     
     
     if( setConstrs )

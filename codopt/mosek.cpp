@@ -218,7 +218,7 @@ void OPT_Mosek::initialize()
     hasNLConstrs = nlObj = false;
     nlConstr = NULL;
     
-    nlObjFactor = 1.0;
+    //nlObjFactor = 1.0;
     
     #if OPT_HAVE_MOSEK
         origSolverRetCode = MSK_SOL_STA_UNKNOWN;
@@ -238,7 +238,14 @@ int OPT_Mosek::initSolverEnv(const int maxConstrs, const int maxVars, const int 
     
     //cout << "Entrei em initSolverEnv" << endl;
     
-    nlObjFactor = 1.0;
+    //nlObjFactor = 1.0;
+    
+    {
+        int r2 = OPT_NLPSolver::initSolverEnv(maxConstrs, maxVars, maxQuadNz);
+        OPT_IFERRORRETURN(r2, r2);
+    }
+    
+    
     
     /* Create the mosek environment. */
     r = MSK_makeenv(&env, NULL);
@@ -1069,7 +1076,7 @@ int MSKAPI optsolvers::OPT_mosekEval(void      *nlhandle, MSKCONST double    *xx
                 //we do not goto termination more. if we have some error, we still let this callback try perform other functions evaluation... //goto termination;
             }
             
-            objval[0] *= myMosek->nlObjFactor;
+            objval[0] *= myMosek->in_nl_obj_factor; //myMosek->nlObjFactor;
             new_x = false;
         }
         else
@@ -1117,7 +1124,7 @@ int MSKAPI optsolvers::OPT_mosekEval(void      *nlhandle, MSKCONST double    *xx
     {
         if( myMosek->nlObj )
         {
-            const double of = myMosek->nlObjFactor;
+            const double of = myMosek->in_nl_obj_factor; //myMosek->nlObjFactor;
             
             int r = nlEval->eval_grad_nl_obj_part( thnumber, n, new_x, xx, grdobjval );
             
@@ -1374,7 +1381,7 @@ int MSKAPI optsolvers::OPT_mosekEval(void      *nlhandle, MSKCONST double    *xx
             }
             else
             {
-                const double f = yo * myMosek->nlObjFactor;
+                const double f = yo * myMosek->in_nl_obj_factor;
                 
                 int r = nlEval->eval_grad_nl_obj_part(thnumber, n, new_x, xx, grdlag);
                 
@@ -1545,7 +1552,7 @@ int MSKAPI optsolvers::OPT_mosekEval(void      *nlhandle, MSKCONST double    *xx
         double *oldValues = lagH.baseStructure.values;
         lagH.baseStructure.values = hesval;
         
-        int r = nlEval->eval_hessian_nl_lagran_part( thnumber, n, m, lagH.getNumberOfElements(), new_x, xx, yo*myMosek->nlObjFactor, lambda, lagH );
+        int r = nlEval->eval_hessian_nl_lagran_part( thnumber, n, m, lagH.getNumberOfElements(), new_x, xx, yo*myMosek->in_nl_obj_factor, lambda, lagH );
         
         lagH.baseStructure.values = oldValues; //restoring the original pointer
         
@@ -3457,7 +3464,8 @@ int OPT_Mosek::setProblemFrom(const minlpproblem::MIP_MINLPProb &prob, const boo
 {
     const int r = OPT_NLPSolver::setProblemFrom( prob, setObj, setConstrs, setVarBounds, setVarType, naddvars, naddconstrs);
     
-    nlObjFactor = prob.objFactor;
+    //nlObjFactor = prob.objFactor;
+    in_nl_obj_factor = prob.objFactor;
     
     return r;
 }

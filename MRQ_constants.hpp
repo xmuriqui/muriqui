@@ -29,8 +29,8 @@ namespace muriqui
     
     
     
-    # define MRQ_VERSION "0.7.04"
-    # define MRQ_DATEV "24-Nov-2021"
+    # define MRQ_VERSION "0.7.05"
+    # define MRQ_DATEV "10-Apr-2022"
     # define MRQ_AUTHOR "Wendel Melo"
     # define MRQ_AUTHOR_FILIATION "Computer Scientist, Federal University of Uberlandia, Brazil"
     # define MRQ_COLLABORATORS "Marcia Fampa (UFRJ, Brazil), Fernanda Raupp (LNCC, Brazil)"
@@ -253,7 +253,7 @@ namespace muriqui
         MRQ_BB_BS_HIGHEST_INT_GAP = 			801,
         MRQ_BB_BS_BIN_FIRST_HIGHEST_INT_GAP = 	802,
         MRQ_BB_BS_STBRANCH_PSEUDO_COSTS =		803,
-        MRQ_BB_BS_VAR_PRIORITIES = 804,
+        MRQ_BB_BS_VAR_PRIORITIES             =  804,
         MRQ_BB_BS_USER_INDEX_CHOICE = 			805,
         MRQ_BB_BS_USER_NODE_GENERATION = 		806,
         

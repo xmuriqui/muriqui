@@ -237,11 +237,11 @@ namespace minlpproblem
         //if constrEval is NULL, we evaluate all constraints having nonlinear terms...
         int nlObjAndConstraintsEval(const bool evalObj, const bool evalConstrs, const int threadnumber, bool newx, const bool* constrEval, const double* x, double& objValue, double* constrValues) const;
         
-        int objEval(const int threadnumber, const bool newx, const double *x, double &value) const;
+        int objEval(const int threadnumber, const bool newx, const double *x, double &value,  double aditionalNlObjFactor = 1.0) const;
         
         
         //complete gradient of objective function
-        int objGradEval(const int threadnumber, const bool newx, const double *x, double *values) const;
+        int objGradEval(const int threadnumber, const bool newx, const double *x, double *values, double aditionalNlObjFactor = 1.0) const;
         
         
         //that function just call the Nonlinear evaluation object to calculate the hessian of the lagrangian. Maybe we do not need it, but in the future will be easier do alterations...
@@ -314,16 +314,16 @@ namespace minlpproblem
         
         MIP_NonLinearEval* getNonLinearEvaluationObject(void) const;
         
-        int getNumberOfBinaryVars(void) const;
+        int getNumberOfBinaryVars() const;
         
-        int getNumberOfConstraints(void) const;
+        int getNumberOfConstraints() const;
         
         int getNumberOfConstraintQuadCoefMatrixTerms( const int constrIndex, int& nzs) const;
         
-        int getNumberOfIntegerVars(void) const;
+        int getNumberOfIntegerVars() const;
         
         //return the number of columns in jacobian structure
-        int getNumberOfJacobianNonZeros(void) const;
+        int getNumberOfJacobianNonZeros() const;
         
         int getNumberOfJacobianNonZerosAtRow(const int row, int &nzs) const;
         
@@ -336,15 +336,15 @@ namespace minlpproblem
         
         int getNumberOfLinearCoefsInConstr(const int constrIndex, int &nzs) const;
         
-        int getNumberOfLinearConstraints(void) const;
+        int getNumberOfLinearConstraints() const;
         
         int getNumbersOfNLConstraints( int &nNLEqualityConstraints, int &nNLInequalityConstraints, int &nNLFreeConstraints) const;
         
-        int getNumberOfNLConstraints(void) const;
+        int getNumberOfNLConstraints() const;
         
         int getNumberOfNLEqualityConstraints(void) const;
         
-        int getNumberOfObjQuadTerms(void) const;
+        int getNumberOfObjQuadTerms() const;
         
         int getNumberOfObjQuadCoefMatrixRowTerms(int row, int &nzs) const;
         
@@ -352,9 +352,11 @@ namespace minlpproblem
         
         int getNumberOfQuadConstraints() const;
         
-        int getNumberOfQuadMatricesInConstrs(void) const;
+        int getNumberOfQuadEqualityConstraints() const;
         
-        int getNumberOfVars(void) const;
+        int getNumberOfQuadMatricesInConstrs() const;
+        
+        int getNumberOfVars() const;
         
         double getObjConstant() const;
         
