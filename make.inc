@@ -11,8 +11,8 @@ PARALEL = -fopenmp  #for g++
 
 
 # C++ Compiler options
-CXXFLAGS = -O0 -m64 -g -Wall     #-pedantic-errors #for debuging information
-#CXXFLAGS = -O3 -m64  -march=native  -Wall 
+#CXXFLAGS = -O0 -m64 -g -Wall     #-pedantic-errors #for debuging information
+CXXFLAGS = -O3 -m64  -march=native  -Wall 
 
 #for microsoft vcms
 #CXXFLAGS = -O2 -nologo -favor:INTEL64
